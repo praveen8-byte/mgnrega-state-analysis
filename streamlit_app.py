@@ -99,7 +99,39 @@ y = filtered_df['Average_days_of_employment_provided_per_Household']
 X = sm.add_constant(X)
 model = sm.OLS(y, X).fit()
 st.text(model.summary().as_text())
+st.divider()
 
+st.subheader("🔮 Predict Average Employment Days")
+
+st.markdown("Adjust the inputs below to predict employment days based on the trained regression model.")
+
+# User inputs
+exp_input = st.slider(
+    "Total Expenditure (₹)",
+    float(filtered_df['Total_Exp'].min()),
+    float(filtered_df['Total_Exp'].max()),
+    float(filtered_df['Total_Exp'].mean())
+)
+
+women_input = st.slider(
+    "Women Share (%)",
+    float(filtered_df['Women_Share'].min()),
+    float(filtered_df['Women_Share'].max()),
+    float(filtered_df['Women_Share'].mean())
+)
+
+# Create input dataframe
+input_data = pd.DataFrame({
+    'const': [1],
+    'Total_Exp': [exp_input],
+    'Women_Share': [women_input]
+})
+
+# Prediction
+prediction = model.predict(input_data)[0]
+
+# Output
+st.success(f"📊 Predicted Average Employment Days: {prediction:.2f} days")
 st.divider()
 
 st.subheader("👩 Women Share by State")
